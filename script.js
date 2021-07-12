@@ -3,7 +3,6 @@
 
     Copyright © 2021 BadAimWeeb
 */
-
 let $ = document.querySelector.bind(document);
 
 let query = new URLSearchParams(location.search);
@@ -26,6 +25,11 @@ videoTag.addEventListener("durationchange", () => {
 videoTag.addEventListener("timeupdate", () => {
     $(".curtime").innerText = formatTime(videoTag.currentTime, videoTag.duration);
     $(".timebar-spent").style.width = ((noNaN(videoTag.currentTime) / noNaN(videoTag.duration)) * 100) + "%";
+    if (videoTag.currentTime === videoTag.duration && videoTag.duration !== 0) {
+        window.postMessage({
+            event: "video_end"
+        });
+    }
 });
 
 videoTag.addEventListener("seeking", () => {
@@ -209,7 +213,7 @@ function formatTime(duration, maxDuration) {
     document.addEventListener("mousemove", e => {
         try {
             clearTimeout(hideTimeout);
-        } catch { }
+        } catch (_) { }
 
         $(".controls").style.visibility = "visible";
         if (!isVisible) {
@@ -296,7 +300,7 @@ function formatTime(duration, maxDuration) {
             if (!document.pictureInPictureElement) {
                 try {
                     await videoTag.requestPictureInPicture();
-                } catch {
+                } catch (_) {
                     alert("Video chưa sẵn sàng, chưa thể bật PiP.");
                 }
             }
@@ -316,7 +320,7 @@ function formatTime(duration, maxDuration) {
         if (videoTag.paused) {
             try {
                 await videoTag.play();
-            } catch { }
+            } catch (_) { }
         } else {
             videoTag.pause();
         }
@@ -422,7 +426,7 @@ function formatTime(duration, maxDuration) {
                     await videoTag.play();
                 }
                 state_isPlayingSeeking = false;
-            } catch { }
+            } catch (_) { }
         }, 250);
     }
 
@@ -434,7 +438,7 @@ function formatTime(duration, maxDuration) {
                     await videoTag.play();
                 }
                 state_isPlayingSeeking = false;
-            } catch { }
+            } catch (_) { }
         }, 250);
     }
 }
@@ -745,7 +749,7 @@ function formatTime(duration, maxDuration) {
 
                         thecanvas.remove();
                         videoTag.poster = dataURL;
-                    } catch { }
+                    } catch (_) { }
 
                     let ct = videoTag.currentTime;
                     let paused = videoTag.paused;
