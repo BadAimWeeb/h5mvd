@@ -3,9 +3,6 @@
 
     Copyright © 2021 BadAimWeeb
 */
-import "core-js/stable";
-import "regenerator-runtime/runtime";
-
 let $ = document.querySelector.bind(document);
 
 let query = new URLSearchParams(location.search);
