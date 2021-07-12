@@ -1,5 +1,5 @@
 /*
-    H5MVD v1.0
+    H5MVD v1.1
 
     Copyright © 2021 BadAimWeeb
 */
@@ -144,22 +144,22 @@ function formatTime(duration, maxDuration) {
             if (!isSettingsShown) {
                 $(".settingsPanel").style.visibility = "hidden";
                 $(".settingsPanel").animate([{
-                        opacity: 1
-                    },
-                    {
-                        opacity: 0
-                    }
+                    opacity: 1
+                },
+                {
+                    opacity: 0
+                }
                 ], 300);
                 await new Promise(x => setTimeout(x, 300));
                 isAnimating = false;
             } else {
                 $(".settingsPanel").style.visibility = "visible";
                 $(".settingsPanel").animate([{
-                        opacity: 0
-                    },
-                    {
-                        opacity: 1
-                    }
+                    opacity: 0
+                },
+                {
+                    opacity: 1
+                }
                 ], 300);
                 await new Promise(x => setTimeout(x, 300));
                 isAnimating = false;
@@ -167,7 +167,7 @@ function formatTime(duration, maxDuration) {
         }
     }
 
-    window.addEventListener('click', async(e) => {
+    window.addEventListener('click', async (e) => {
         if (outsideClick(e, $(".settings"))) {
             if (isSettingsShown) {
                 if (isAnimating) {
@@ -175,11 +175,11 @@ function formatTime(duration, maxDuration) {
                 }
                 $(".settingsPanel").style.visibility = "hidden";
                 $(".settingsPanel").animate([{
-                        opacity: 1
-                    },
-                    {
-                        opacity: 0
-                    }
+                    opacity: 1
+                },
+                {
+                    opacity: 0
+                }
                 ], 300);
                 await new Promise(x => setTimeout(x, 300));
                 isAnimating = false;
@@ -196,11 +196,11 @@ function formatTime(duration, maxDuration) {
             isVisible = false;
             $(".controls").style.visibility = "hidden";
             $(".controls").animate([{
-                    opacity: 1
-                },
-                {
-                    opacity: 0
-                }
+                opacity: 1
+            },
+            {
+                opacity: 0
+            }
             ], 250);
         } else {
             hideTimeout = setTimeout(hideFunc, 2500);
@@ -209,16 +209,16 @@ function formatTime(duration, maxDuration) {
     document.addEventListener("mousemove", e => {
         try {
             clearTimeout(hideTimeout);
-        } catch {}
+        } catch { }
 
         $(".controls").style.visibility = "visible";
         if (!isVisible) {
             $(".controls").animate([{
-                    opacity: 0
-                },
-                {
-                    opacity: 1
-                }
+                opacity: 0
+            },
+            {
+                opacity: 1
+            }
             ], 250);
             isVisible = true;
         }
@@ -316,7 +316,7 @@ function formatTime(duration, maxDuration) {
         if (videoTag.paused) {
             try {
                 await videoTag.play();
-            } catch {}
+            } catch { }
         } else {
             videoTag.pause();
         }
@@ -416,25 +416,25 @@ function formatTime(duration, maxDuration) {
 
     async function seek(percentage) {
         videoTag.currentTime = percentage * noNaN(videoTag.duration);
-        setTimeout(async() => {
+        setTimeout(async () => {
             try {
                 if (state_isPlayingSeeking) {
                     await videoTag.play();
                 }
                 state_isPlayingSeeking = false;
-            } catch {}
+            } catch { }
         }, 250);
     }
 
     async function seekSecond(seconds) {
         videoTag.currentTime = seconds;
-        setTimeout(async() => {
+        setTimeout(async () => {
             try {
                 if (state_isPlayingSeeking) {
                     await videoTag.play();
                 }
                 state_isPlayingSeeking = false;
-            } catch {}
+            } catch { }
         }, 250);
     }
 }
@@ -447,20 +447,19 @@ function formatTime(duration, maxDuration) {
 }
 
 // Main component to fetch video
-(async() => {
+(async () => {
     let baseURL = query.get("playback");
     let json = await (await fetch(baseURL)).json();
 
     for (let codec in json) {
-        let isSupported = MediaSource.isTypeSupported(json[codec].codec.video);
-
-        json[codec].supported = isSupported;
-
         for (let quality in json[codec].quality) {
+            let isSupported = MediaSource.isTypeSupported(json[codec].quality[quality].codec.video);
+            json[codec].quality[quality].supported = isSupported;
+
             let efficientInfo = await navigator.mediaCapabilities.decodingInfo({
                 type: "media-source",
                 video: {
-                    contentType: json[codec].codec.video,
+                    contentType: json[codec].quality[quality].codec.video,
                     width: json[codec].quality[quality].width,
                     height: json[codec].quality[quality].height,
                     bitrate: json[codec].quality[quality].bitrate,
@@ -489,7 +488,7 @@ function formatTime(duration, maxDuration) {
         optionCodec.value = codec;
         optionCodec.innerText = json[codec].display;
 
-        if (!json[codec].supported) {
+        if (!(Object.values(json[codec].quality).findIndex(v => v.supported && v.efficientInfo.supported) + 1)) {
             optionCodec.disabled = true;
             optionCodec.innerText += " (không hỗ trợ)";
         }
@@ -531,6 +530,13 @@ function formatTime(duration, maxDuration) {
             let qualityNode = document.createElement("option");
             qualityNode.innerText = json[currentQuality.codec].quality[quality].display;
             qualityNode.value = quality;
+            if (
+                !json[currentQuality.codec].quality[quality].supported ||
+                !json[currentQuality.codec].quality[quality].efficientInfo.supported
+            ) {
+                qualityNode.innerText += " (không hỗ trợ)";
+                qualityNode.disabled = true;
+            }
 
             qualitySelect.appendChild(qualityNode);
         }
@@ -555,13 +561,16 @@ function formatTime(duration, maxDuration) {
 
     let bufferHealthLow = 0;
     let bufferHealthHigh = 0;
-    (async() => {
-        for (;;) {
+    (async () => {
+        for (; ;) {
             let qualityList = [];
             if (autoSelect.codec) {
                 for (let codec in json) {
                     for (let quality in json[codec].quality) {
-                        if (json[codec].quality[quality].efficientInfo.supported) {
+                        if (
+                            json[codec].quality[quality].supported &&
+                            json[codec].quality[quality].efficientInfo.supported
+                        ) {
                             qualityList.push({
                                 powerEfficient: json[codec].quality[quality].efficientInfo.powerEfficient,
                                 smooth: json[codec].quality[quality].efficientInfo.smooth,
@@ -576,7 +585,10 @@ function formatTime(duration, maxDuration) {
             } else if (autoSelect.quality) {
                 let codec = currentQuality.codec;
                 for (let quality in json[codec].quality) {
-                    if (json[codec].quality[quality].efficientInfo.supported) {
+                    if (
+                        json[codec].quality[quality].supported &&
+                        json[codec].quality[quality].efficientInfo.supported
+                    ) {
                         qualityList.push({
                             powerEfficient: json[codec].quality[quality].efficientInfo.powerEfficient,
                             smooth: json[codec].quality[quality].efficientInfo.smooth,
@@ -694,10 +706,10 @@ function formatTime(duration, maxDuration) {
 
                     let cacheTime = 0;
                     let failedCacheTime = 0;
-                    for (let z = 0;; z++) {
+                    for (let z = 0; ; z++) {
                         if (z % 50 === 0) {
                             cacheVideo.currentTime = Math.floor(videoTag.currentTime);
-                            cacheVideo.play().catch(() => {});
+                            cacheVideo.play().catch(() => { });
                         }
 
                         let cacheBufferHealth = getBufferHealth(videoTag.currentTime, cacheVideo.buffered);
@@ -733,7 +745,7 @@ function formatTime(duration, maxDuration) {
 
                         thecanvas.remove();
                         videoTag.poster = dataURL;
-                    } catch {}
+                    } catch { }
 
                     let ct = videoTag.currentTime;
                     let paused = videoTag.paused;
