@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Player</title>
+    <link rel="stylesheet" href="./style.css">
+    <script src="./script.js" defer></script>
+    <link rel="stylesheet" href="./fonts/material-icons/main.css">
+    <link rel="stylesheet" href="./fonts/RobotoMono.css">
+    <link rel="stylesheet" href="./fonts/OpenSans.css">
+</head>
+
+<body>
+    <!--
+        H5MVD v1.0
+
+        Copyright © 2021 BadAimWeeb
+    -->
+    <figure id="videoContainer">
+        <video playsinline control preload="auto">
+            Trình duyệt không hỗ trợ trình phát video này. Vui lòng nâng cấp trình duyệt hoặc nghỉ xem :))
+        </video>
+
+        <div class="spinner loading">
+            <svg viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="20" />
+            </svg>
+        </div>
+
+        <div class="controls">
+            <div class="timebar">
+                <div class="timebar-spent">
+                    <div class="timebar-currpos"></div>
+                </div>
+
+                <div class="timebar-buffer"></div>
+            </div>
+
+            <div class="play-pause" onclick="playOrPause()">
+                <div class="icon"><span class="material-icons">play_arrow</span></div>
+            </div>
+
+            <div class="volume">
+                <div class="icon">
+                    <span class="material-icons">volume_up</span>
+                </div>
+            </div>
+
+            <div class="volume-container">
+                <input type="range" min="0" max="100" value="100" class="volume-slider" id="volume">
+            </div>
+
+            <div class="time">
+                <span class="curtime">00:00</span><span> / </span><span class="totaltime">00:00</span>
+            </div>
+
+            <div class="fullscreen" onclick="fullscreen()" tabindex="6">
+                <div class="icon"><span class="material-icons">fullscreen</span></div>
+            </div>
+
+            <div class="pip" onclick="pip()" tabindex="5">
+                <div class="icon"><span class="material-icons">picture_in_picture_alt</span></div>
+            </div>
+
+            <div class="settings" tabindex="4">
+                <div class="icon"><span class="material-icons" onclick="showSettings()">settings</span></div>
+
+                <div class="settingsPanel">
+                    <div class="settingsItem">
+                        <label for="codec">Codec</label> <select id="codec" tabindex="1">
+                            <option value="auto" id="codecAuto" selected>Tự động</option>
+                        </select><br>
+                    </div>
+                    <div class="settingsItem">
+                        <label for="quality">Chất lượng</label> <select id="quality" tabindex="2">
+                            <option value="auto" id="qualityAuto" selected>Tự động</option>
+                        </select>
+                    </div>
+                    <div class="settingsItem">
+                        <label for="speed">Tốc độ</label> <select id="speed" tabindex="3">
+                            <option value="0.25">0.25x</option>
+                            <option value="0.5">0.5x</option>
+                            <option value="0.75">0.75x</option>
+                            <option value="1" selected>Chuẩn (1x)</option>
+                            <option value="1.25">1.25x</option>
+                            <option value="1.5">1.5x</option>
+                            <option value="1.75">1.75x</option>
+                            <option value="2">2x</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </figure>
+</body>
+
+</html>

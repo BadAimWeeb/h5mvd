@@ -1,0 +1,299 @@
+/*
+    H5MVD v1.0
+
+    Copyright © 2021 BadAimWeeb
+*/
+
+body {
+    background-color: black;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+video {
+    height: 100vh;
+    width: 100vw;
+}
+
+#videoContainer {
+    margin: 0;
+}
+
+.controls * {
+    font-family: "Open Sans";
+}
+
+.controls {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: calc(100% - 32px);
+    height: 56px;
+    padding-left: 16px;
+    padding-right: 16px;
+    color: white;
+    background: linear-gradient(to top, black, transparent);
+}
+
+.timebar {
+    position: absolute;
+    top: 12px;
+    height: 4px;
+    width: calc(100% - 32px);
+    background-color: rgb(85, 85, 85);
+}
+
+.timebar:hover {
+    cursor: pointer;
+}
+
+.timebar-spent {
+    background-color: #9F6EEE;
+    height: 4px;
+    width: 0%;
+    position: absolute;
+    z-index: 1;
+}
+
+.timebar-buffer {
+    background-color: grey;
+    height: 4px;
+    width: 0%;
+    position: absolute;
+}
+
+.timebar:hover .timebar-spent .timebar-currpos {
+    display: block;
+    animation: from0to100 0.1s ease-in-out;
+    transform: scale(1);
+}
+
+@keyframes from0to100 {
+    0% {
+        transform: scale(0);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+.timebar-currpos {
+    background-color: #9F6EEE;
+    width: 13px;
+    height: 13px;
+    border-radius: 6.5px;
+    position: absolute;
+    right: -6.5px;
+    top: -4px;
+    box-shadow: 0px 0px 2.5px currentColor;
+    transform: scale(0);
+}
+
+.play-pause,
+.fullscreen,
+.pip,
+.settings .icon,
+.volume {
+    cursor: pointer;
+    float: right;
+    width: 40px;
+    height: 40px;
+    margin-top: 16px;
+    position: relative;
+    transition: .2s;
+}
+
+.play-pause,
+.volume,
+.volume-container {
+    float: left
+}
+
+.volume-container {
+    display: flex;
+    width: 80px;
+    height: 24px;
+    padding-right: 5px;
+    float: left;
+    margin-top: 16px;
+    padding-top: 16px;
+    vertical-align: middle;
+}
+
+.volume-slider {
+    -webkit-appearance: none;
+    width: 80px;
+    background: rgb(85, 85, 85);
+    height: 5px;
+    border-radius: 5px;
+}
+
+.volume-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    background: #9F6EEE;
+    width: 10px;
+    height: 10px;
+    border-radius: 5px;
+    box-shadow: 0px 0px 3px #fff;
+}
+
+.fullscreen .icon .material-icons,
+.play-pause .icon .material-icons,
+.settings .icon .material-icons,
+.pip .icon .material-icons,
+.volume .icon .material-icons {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.play-pause .icon .material-icons {
+    line-height: 36px;
+    font-size: 36px;
+}
+
+.settings .icon .material-icons,
+.pip .icon .material-icons,
+.volume .icon .material-icons {
+    line-height: 26px;
+    font-size: 26px;
+}
+
+.fullscreen .icon .material-icons {
+    line-height: 32px;
+    font-size: 32px;
+}
+
+.fullscreen:hover,
+.play-pause:hover,
+.pip:hover,
+.settings .icon:hover,
+.volume:hover {
+    background: rgba(255, 255, 255, 0.151);
+}
+
+.time {
+    font-size: 13px;
+    margin-top: 28px;
+    float: left;
+    margin-left: 8px;
+    cursor: default;
+}
+
+.time * {
+    font-family: "Roboto Mono";
+}
+
+.settingsPanel {
+    visibility: hidden;
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    transform: translate(-16px, -40px);
+    background: rgba(20, 20, 20, 0.6);
+    -webkit-backdrop-filter: blur(20px) saturate(1.5) brightness(1.2);
+    backdrop-filter: blur(20px) saturate(1.5) brightness(1.2);
+    padding-top: 8px;
+    padding-bottom: 8px;
+    margin-bottom: 8px;
+    border-radius: 2px;
+    min-width: 250px;
+}
+
+.settingsItem {
+    height: 40px;
+    display: table;
+    margin: 5px;
+    border-radius: 3px;
+    transition: .2s;
+}
+
+.settingsItem label {
+    display: inline-block;
+    height: 100%;
+    width: 92px;
+    font-size: 14px;
+    padding-left: 8px;
+}
+
+.settingsItem select {
+    height: 100%;
+    width: 150px;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    border-radius: 3px;
+    outline: none;
+}
+
+.settingsItem select option {
+    background-color: rgb(40, 40, 40);
+    color: white;
+}
+
+.settingsItem:hover {
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+.loading {
+    height: 128px;
+    width: 128px;
+    transform: translate(-50%, -50%);
+    position: fixed;
+    z-index: 10000;
+    top: 50%;
+    left: 50%;
+    visibility: hidden;
+}
+
+
+/* Spinner */
+
+.spinner svg {
+    animation: rotate 1.5s linear infinite;
+    height: 100%;
+    width: 100%;
+}
+
+.spinner circle {
+    stroke-dasharray: 1, 200;
+    stroke-dashoffset: 0;
+    animation: dash 1.5s ease-in-out infinite 0s;
+    stroke-linecap: none;
+    fill: none;
+    stroke-width: 3;
+    stroke: #9F6EEE;
+}
+
+@keyframes rotate {
+    100% {
+        -webkit-transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes dash {
+    0% {
+        stroke-dasharray: 1, 200;
+        stroke-dashoffset: 0;
+    }
+    50% {
+        stroke-dasharray: 89, 200;
+        stroke-dashoffset: -35;
+    }
+    100% {
+        stroke-dasharray: 89, 200;
+        stroke-dashoffset: -124;
+    }
+}
